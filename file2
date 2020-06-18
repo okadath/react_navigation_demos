@@ -1,0 +1,30 @@
+ ls
+ yarn add expo
+ yarn expo init demo
+ cd demo/
+ yarn expo start
+ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+ yarn expo start
+ yarn add react-navigation
+ yarn add native-base
+ yarn react-native link
+ yarn expo start
+ watchman watch-del-all
+ yarn add watchman
+ yarn start --reset-cache
+ yarn watchman watch-del-all
+ yarn start
+ yarn add react-native-gesture-handler
+ yarn react-native link react-native-gesture-handler
+ yarn expo start
+ yarn add react-navigation-tabs
+ yarn expo start
+ yarn add react-native-reanimated react-native-gesture-handler react-native-screens
+ yarn add react-native link react-native-reanimated
+ yarn react-native link react-native-reanimated
+ yarn react-native link react-navigation-tabs
+ yarn expo start
+ yarn expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+ yarn expo start
+ yarn add @react-navigation/native @react-navigation/compat @react-navigation/stack
+ yarn expo start

@@ -43,3 +43,56 @@ yarn expo start
 yarn add @react-navigation/native @react-navigation/compat @react-navigation/stack
 yarn expo start
 ```
+
+## basico:
+
+crear los componentes de las vistas y estos seran apilados en el stack
+el navigationcontainer necesita una vista para mostrar, al al parecer literalmente es un stack
+```
+
+import * as React from 'react';
+import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+function HomeScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screenn</Text>
+    </View>
+  );
+}
+function DetailsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Details" component={DetailsScreen} options={{ title: 'Overview' }}/>
+        <Stack.Screen name="Home ddemo" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default App;
+```
+
+## paso de valores entre vistas
+hay que usar context, no funciones:
+```jsx
+//NO!!
+component={() => <HomeScreen />}
+
+//SI!
+<Stack.Screen name="Home">
+  {props => <HomeScreen {...props} extraData={someData} />}
+</Stack.Screen>
+```

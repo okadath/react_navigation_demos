@@ -2107,6 +2107,11 @@ create-react-class@^15.6.2, create-react-class@^15.6.3:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
+create-react-native-app@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/create-react-native-app/-/create-react-native-app-3.4.0.tgz#60722478b71f3509af53dbd65d033de72e44875d"
+  integrity sha512-3a1QgXSl9sCpfgDCHX12ydRQHYMoAd6nYL1rRupeWglbj3YWEWui/unjJBFgpyQPwKvS8w4Hon871mSCcXtGOQ==
+
 cross-spawn@^5.0.1, cross-spawn@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-5.1.0.tgz#e8bd0efee58fcff6f8f94510a0a554bbfa235449"

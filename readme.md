@@ -172,9 +172,9 @@ function DetailsScreen({ navigation }) {
 ```
 
 
-## paso de valores entre vistas
+### paso de valores entre vistas
 hay que usar context, no funciones:
-```jsx
+```js
 //NO!!
 component={() => <HomeScreen />}
 
@@ -192,8 +192,8 @@ component={() => <HomeScreen />}
 ```
 
 
-para el paso de parametros anidados hay que indicar la vista al parecer :v:
-```
+para el paso de parametros anidados hay que indicar la vista al parecer :v :
+```js
 navigation.navigate('Account', {
   screen: 'Settings',
   params: { user: 'jane' },
@@ -312,6 +312,263 @@ function App() {
       	<Stack.Screen name="CreatePost" component={CreatePostScreen} />
 		...
 ```
+
+### estilos
+para cammbiar el nombre de una pagina 
+```js
+
+function HomeScreen({ navigation, route} ) {
+...
+      <Button
+        title="Go to Profile"
+        onPress={() =>
+          navigation.navigate('Profile', { name: 'Custom profile header' })
+        }
+      />
+...
+```
+
+ y en el stack agregamos un router de su vista
+
+```js
+ <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={({ route }) => ({ title: route.params.name })}
+
+        />
+```
+tambien se puede activar solo, editandolo desde el componente:
+
+```jsx
+function ProfileScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Profile screen</Text>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+
+    <Button
+      title="Update the title"
+      onPress={() => navigation.setOptions({ title: 'Updated!' })}
+    />
+    </View>
+  );
+}
+```
+
+
+
+
+
+para editar los estilos de los headers agregamos a su info en el stack (una sola vista):
+```jsx
+<Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          //otra opcion para actualizar
+          // options={({ route }) => ({ title: route.params.name })}
+          options={{
+          title: 'My home',
+          headerStyle: {
+            backgroundColor: '#f4511e',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+
+        }}
+```
+
+para muchas vistas hacer la edicion de estilos en el navigator:
+
+```jsx
+ <Stack.Navigator mode="modal"      
+       screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+
+      >
+```
+
+
+
+para colocar un icono agregamos al stack
+
+```jsx
+
+<Stack.Screen name="CreatePost" component={CreatePostScreen} 
+         options={{ headerTitle: props => <LogoTitle {...props} /> }} 
+         />
+```
+y agregamos una funcion para devolver un componente imagen(trabaja facil con web, dificil con statics):
+```jsx
+import { Button, View, Text,TextInput,Image } from 'react-native';
+...
+function LogoTitle() {
+  return (
+    <Image
+      style={{ width: 50, height: 50 }}
+      source={{uri:"https://img2.freepng.es/20190128/fy/kisspng-domestic-rabbit-computer-icons-scalable-vector-gra-5c4f03b504a5d6.454490481548682165019.jpg"}} 
+    />
+  );
+}
+```
+
+### interaccion entre headers y screens
+creamos un componente de vista que manejara la programacion de la interaccion:
+```jsx
+function counter({ navigation }) {
+  const [count, setCount] = React.useState(0);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button onPress={() => setCount(c => c + 1)} title="Update count" />
+      ),
+    });
+  }, [navigation]);
+
+  return <Text>Count: {count}</Text>;
+}
+
+```
+
+y lo llamamos desde un boton:
+```js
+<Button title="See counter(inter header-screen)"
+        onPress={() => navigation.navigate('Counter')}
+      />
+```
+
+hay que apilarlo en el stack y pasarle el router o si no no podra acceder a los datos:
+
+```js
+...
+<Stack.Screen
+        name="Counter"
+        component={counter}
+        options={({ navigation, route }) => ({
+          headerTitle: props => <LogoTitle {...props} />,
+        })}
+      />
+```
+### modal
+requiere stacks anidados
+
+es posible llamarlo desde cualquier vista
+```js
+<Button onPress={() => navigation.navigate('MyModal')} 
+  title="Open Modal"
+      />
+```
+
+la vista modal es igual que cualquier vista normal:
+```jsx
+function ModalScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    </View>
+  );
+}
+```
+ademas de esa screen debemos reescribir nuestra screen principal donde esta el stack para que apile un nuevo stack con el stack principal y el modal
+
+```jsx
+//crear dos stacks
+const MainStack = createStackNavigator();
+const RootStack = createStackNavigator();
+
+//era el antiguo app
+function MainStackScreen() {
+  return (
+    //lo instanciamos del creado arriba y todo es como el original en app
+        //son exactamente las mismas vistas principales 
+    //como si solo hubiera un stack
+      <MainStack.Navigator mode="modal" >
+
+        <MainStack.Screen name="Home" component={HomeScreen } />
+        <MainStack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} options={{ title: 'Overview' }}/>
+        <MainStack.Screen name="CreatePost" component={CreatePostScreen} 
+         options={{ headerTitle: 
+          props => <LogoTitle {...props} /> ,
+          headerRight: () => (
+            <Button
+              onPress={() => alert('This is a button!')}
+              title="Info"
+              color="#000"
+            />
+          ),
+        }} 
+         />
+         <MainStack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          //otra opcion para actualizar
+          // options={({ route }) => ({ title: route.params.name })}
+          options={{
+          title: 'My home',
+          headerStyle: {
+            backgroundColor: '#f4511e',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+
+        }}
+        />
+
+        <MainStack.Screen
+        name="Counter"
+        component={counter}
+        options={({ navigation, route }) => ({
+          headerTitle: props => <LogoTitle {...props} />,
+        })}
+      />
+      </MainStack.Navigator>
+   
+  );
+}
+
+
+
+function App() {
+  //este es el nuevo stack anidado que posee el principal y el modal y indica las vistas a usar, ademas de manejar el 
+  //navigation container que es el manejador principal de vistas
+  return (
+    <NavigationContainer>
+    <RootStack.Navigator mode="modal">
+      <RootStack.Screen
+        name="Main"
+        component={MainStackScreen}
+        options={{ headerShown: false }}
+      />
+      <RootStack.Screen name="MyModal" component={ModalScreen} />
+    </RootStack.Navigator>
+     </NavigationContainer>
+  );
+}
+
+
+export default App;
+```
+
+
+
+
+
+
+
+
 
 
 

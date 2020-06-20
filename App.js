@@ -20,7 +20,7 @@
 // In App.js in a new project
 
 import * as React from 'react';
-import { Button, View, Text,TextInput } from 'react-native';
+import { Button, View, Text,TextInput,Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -50,9 +50,39 @@ function HomeScreen({ navigation, route} ) {
         onPress={() => navigation.navigate('CreatePost')}
       />
       <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text>
+      <Button
+        title="Go to Profile"
+        onPress={() =>
+          navigation.navigate('Profile', { name: 'Custom profile header' })
+        }
+      />
+      <Button
+        title="See counter(inter header-screen)"
+        onPress={() => navigation.navigate('Counter')}
+      />
+       
     </View>
   );
 }
+
+function ProfileScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Profile screen</Text>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+
+		<Button
+			title="Update the title"
+			onPress={() => navigation.setOptions({ title: 'Updated!' })}
+		/>
+		<Button
+        onPress={() => navigation.navigate('MyModal')}
+        title="Open Modal"
+      />
+    </View>
+  );
+}
+
 function DetailsScreen({ route, navigation }) {
 
 	const { itemId } = route.params;
@@ -108,17 +138,107 @@ function CreatePostScreen({ navigation, route }) {
   );
 }
 
-const Stack = createStackNavigator();
-function App() {
+function LogoTitle() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator mode="modal">
-       	<Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} options={{ title: 'Overview' }}/>
-      	<Stack.Screen name="CreatePost" component={CreatePostScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Image
+      style={{ width: 50, height: 50 }}
+      source={{uri:"https://img2.freepng.es/20190128/fy/kisspng-domestic-rabbit-computer-icons-scalable-vector-gra-5c4f03b504a5d6.454490481548682165019.jpg"}} 
+    />
   );
 }
+function counter({ navigation }) {
+  const [count, setCount] = React.useState(0);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button onPress={() => setCount(c => c + 1)} title="Update count" />
+      ),
+    });
+  }, [navigation]);
+
+  return <Text>Count: {count}</Text>;
+}
+
+function ModalScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    </View>
+  );
+}
+
+const MainStack = createStackNavigator();
+const RootStack = createStackNavigator();
+
+
+function MainStackScreen() {
+  return (
+      <MainStack.Navigator mode="modal"      
+
+
+      >
+       	<MainStack.Screen name="Home" component={HomeScreen } />
+        <MainStack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} options={{ title: 'Overview' }}/>
+      	<MainStack.Screen name="CreatePost" component={CreatePostScreen} 
+      	 options={{ headerTitle: 
+      	 	props => <LogoTitle {...props} /> ,
+      	 	headerRight: () => (
+            <Button
+              onPress={() => alert('This is a button!')}
+              title="Info"
+              color="#000"
+            />
+          ),
+      	}} 
+      	 />
+      	 <MainStack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          //otra opcion para actualizar
+          // options={({ route }) => ({ title: route.params.name })}
+          options={{
+          title: 'My home',
+          headerStyle: {
+            backgroundColor: '#f4511e',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+
+        }}
+        />
+
+        <MainStack.Screen
+        name="Counter"
+        component={counter}
+        options={({ navigation, route }) => ({
+          headerTitle: props => <LogoTitle {...props} />,
+        })}
+      />
+      </MainStack.Navigator>
+   
+  );
+}
+
+
+
+function App() {
+  return (
+  	<NavigationContainer>
+    <RootStack.Navigator mode="modal">
+      <RootStack.Screen
+        name="Main"
+        component={MainStackScreen}
+        options={{ headerShown: false }}
+      />
+      <RootStack.Screen name="MyModal" component={ModalScreen} />
+    </RootStack.Navigator>
+     </NavigationContainer>
+  );
+}
+
 
 export default App;

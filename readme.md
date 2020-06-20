@@ -25,7 +25,7 @@ cd demo/
 yarn expo start
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 yarn expo start
-yarn add react-navigation native-base
+yarn add react-native react-navigation native-base
 yarn react-native link
 yarn expo start
 
@@ -563,13 +563,33 @@ export default App;
 ```
 
 
+al parecer hay problemas con el componente toast para el despliegue de errores ya que se basa en stack navigation pero ha cambiado mucho la sintaxis de estos, entonces habra que esperar a que lo arreglen o actualicen para hallar la solucion
 
+para react usare este 
+``` 
+yarn start react-native-simple-toast
 
+import Toast from 'react-native-simple-toast';
+ 
+Toast.show('This is a toast.');
+Toast.show('This is a long toast.', Toast.LONG);
+ 
+Toast.showWithGravity('This is a long toast at the top.', Toast.LONG, Toast.TOP);
+ 
+Toast.show('This is nicely visible even if you call this when an Alert is shown', Toast.SHORT, [
+  'UIAlertController',
+]);
+```
 
+y solo hay que llamarlo en alguna accion:
+```
+<Button
+        onPress={() => Toast.show('This is a toast.')}
+        title="Toasr"
+      />
+```
 
-
-
-
-
+## web build production
+para exportar un proyecto de expo a web basta con usar `expo build:web` y esos archivos se podran servir desde cualquier webserver (funciono el de django `python3 -m http.server 8000`)
 
 

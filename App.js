@@ -23,6 +23,17 @@ import * as React from 'react';
 import { Button, View, Text,TextInput,Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+// import Toast from 'react-native-simple-toast';
+ 
+// Toast.show('This is a toast.');
+// Toast.show('This is a long toast.', Toast.LONG);
+ 
+// Toast.showWithGravity('This is a long toast at the top.', Toast.LONG, Toast.TOP);
+ 
+// Toast.show('This is nicely visible even if you call this when an Alert is shown', Toast.SHORT, [
+//   'UIAlertController',
+// ]);}+
+
 
 function HomeScreen({ navigation, route} ) {
 
@@ -78,6 +89,10 @@ function ProfileScreen({ navigation }) {
 		<Button
         onPress={() => navigation.navigate('MyModal')}
         title="Open Modal"
+      />
+      <Button
+        // onPress={() => Toast.show('This is a toast.')}
+        title="Toasr"
       />
     </View>
   );
